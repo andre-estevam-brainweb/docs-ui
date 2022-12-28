@@ -1,0 +1,31 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  pre-release:
+    name: "UI Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Install
+        run: |
+          npm ci
+
+      - name: Build
+        run: |
+          gulp bundle
+
+      - name: Archive the Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ui-bundle.zip
+          asset_name: ui-bundle.zip
+          tag: latest
+          overwrite: true
+          file_glob: true
